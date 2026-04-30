@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Math Game - PintarHub</title>
+<title>English Vocabulary - PintarHub</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
     tailwind.config = { darkMode: 'class' };
@@ -17,15 +17,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 :root {
     --bg-base: #f8fafc;
-    --grad-1: hsla(217,100%,94%,0.5);
-    --grad-2: hsla(280,100%,96%,0.5);
+    --grad-1: hsla(228,100%,94%,0.5);
+    --grad-2: hsla(210,100%,96%,0.5);
     --modal-bg: rgba(255, 255, 255, 0.85);
     --modal-border: rgba(255, 255, 255, 1);
 }
 .dark {
     --bg-base: #020617;
-    --grad-1: hsla(217,100%,15%,0.5);
-    --grad-2: hsla(280,100%,15%,0.5);
+    --grad-1: hsla(228,100%,15%,0.5);
+    --grad-2: hsla(210,100%,15%,0.5);
     --modal-bg: rgba(2, 6, 23, 0.85);
     --modal-border: rgba(255, 255, 255, 0.15);
 }
@@ -33,15 +33,12 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); backg
 .modal-glass { background: var(--modal-bg); backdrop-filter: blur(30px); border: 1px solid var(--modal-border); box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5); }
 @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
 .animate-pop-in { animation: popIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-@keyframes slideDown { 0% { transform: translate(-50%, -100%); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
-.toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; animation: slideDown 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+::-webkit-scrollbar { width: 0px; }
 </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4 text-slate-800 dark:text-slate-100 transition-colors duration-300">
 
-<div id="alert-container"></div>
-
-<div id="panel-gameplay" class="modal-glass rounded-[3rem] p-8 sm:p-10 w-full max-w-xl flex flex-col gap-6 animate-pop-in relative overflow-hidden">
+<div id="panel-gameplay" class="modal-glass rounded-[3rem] p-8 w-full max-w-2xl flex flex-col gap-6 animate-pop-in relative overflow-hidden">
     <div class="flex justify-between items-center bg-white/70 dark:bg-slate-800/70 px-6 py-4 rounded-3xl border border-white dark:border-slate-700 shadow-sm transition-colors">
         <div class="flex gap-4">
             <div class="text-green-600 dark:text-green-400 font-bold text-lg">Benar: <span id="score-correct" class="text-2xl font-black ml-1">0</span></div>
@@ -49,32 +46,34 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); backg
         </div>
         <div class="flex items-center gap-3">
             <div id="timer-container" class="flex items-center gap-2">
-                <svg class="w-7 h-7 text-rose-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span id="game-timer" class="text-rose-600 dark:text-rose-400 font-black text-3xl tracking-widest">01:00</span>
+                <svg class="w-7 h-7 text-indigo-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span id="game-timer" class="text-indigo-600 dark:text-indigo-400 font-black text-3xl tracking-widest">01:00</span>
             </div>
             <button id="btn-end-session" onclick="endGame()" class="hidden bg-slate-900 dark:bg-slate-700 text-white px-6 py-3 rounded-2xl font-bold text-sm hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors shadow-lg active:scale-95">Akhiri Sesi</button>
         </div>
     </div>
     
-    <div class="py-12 text-center">
-        <h1 id="math-question" class="text-7xl sm:text-8xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm transition-colors">Memuat...</h1>
+    <div class="py-8 text-center px-4">
+        <h1 id="vocab-question" class="text-4xl sm:text-5xl font-black text-slate-800 dark:text-white tracking-tight drop-shadow-sm mb-4 leading-tight transition-colors">Memuat...</h1>
+        <p id="vocab-translation" class="text-lg sm:text-xl text-slate-500 dark:text-slate-400 font-medium italic transition-colors">Memuat terjemahan...</p>
     </div>
 
-    <div id="answer-mcq" class="grid grid-cols-2 gap-5 hidden">
-        <button onclick="checkAnswer(this)" class="py-5 rounded-3xl bg-white dark:bg-slate-800 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white text-slate-800 dark:text-white font-black text-3xl border-2 border-slate-200 dark:border-slate-700 hover:border-blue-600 dark:hover:border-blue-600 shadow-sm transition-all active:scale-95"></button>
-        <button onclick="checkAnswer(this)" class="py-5 rounded-3xl bg-white dark:bg-slate-800 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white text-slate-800 dark:text-white font-black text-3xl border-2 border-slate-200 dark:border-slate-700 hover:border-blue-600 dark:hover:border-blue-600 shadow-sm transition-all active:scale-95"></button>
-        <button onclick="checkAnswer(this)" class="py-5 rounded-3xl bg-white dark:bg-slate-800 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white text-slate-800 dark:text-white font-black text-3xl border-2 border-slate-200 dark:border-slate-700 hover:border-blue-600 dark:hover:border-blue-600 shadow-sm transition-all active:scale-95"></button>
-        <button onclick="checkAnswer(this)" class="py-5 rounded-3xl bg-white dark:bg-slate-800 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white text-slate-800 dark:text-white font-black text-3xl border-2 border-slate-200 dark:border-slate-700 hover:border-blue-600 dark:hover:border-blue-600 shadow-sm transition-all active:scale-95"></button>
+    <div id="answer-mcq" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <button onclick="checkAnswer(0, this)" class="py-5 px-6 rounded-3xl bg-white dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 hover:text-white text-slate-800 dark:text-white font-bold text-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-600 shadow-sm transition-all active:scale-95 text-left flex justify-between items-center group"></button>
+        <button onclick="checkAnswer(1, this)" class="py-5 px-6 rounded-3xl bg-white dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 hover:text-white text-slate-800 dark:text-white font-bold text-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-600 shadow-sm transition-all active:scale-95 text-left flex justify-between items-center group"></button>
+        <button onclick="checkAnswer(2, this)" class="py-5 px-6 rounded-3xl bg-white dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 hover:text-white text-slate-800 dark:text-white font-bold text-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-600 shadow-sm transition-all active:scale-95 text-left flex justify-between items-center group"></button>
+        <button onclick="checkAnswer(3, this)" class="py-5 px-6 rounded-3xl bg-white dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 hover:text-white text-slate-800 dark:text-white font-bold text-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-600 shadow-sm transition-all active:scale-95 text-left flex justify-between items-center group"></button>
     </div>
 
-    <div id="answer-input" class="hidden flex gap-4">
-        <input type="number" id="math-input" placeholder="Ketik jawaban..." class="flex-1 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-3xl px-8 py-5 text-3xl font-black text-slate-800 dark:text-white outline-none focus:border-blue-500 shadow-sm transition-all text-center">
-        <button onclick="checkInputAnswer()" class="bg-blue-600 text-white rounded-3xl px-10 py-5 font-black text-xl shadow-lg hover:bg-blue-700 active:scale-95 transition-all">Jawab</button>
+    <div id="explanation-box" class="hidden mt-4 p-6 bg-indigo-50 dark:bg-slate-800/80 border-2 border-indigo-100 dark:border-slate-700 rounded-3xl animate-pop-in transition-colors">
+        <h3 class="font-bold text-indigo-800 dark:text-indigo-300 mb-3 text-lg">Arti Kosakata:</h3>
+        <ul id="explanation-list" class="space-y-2 text-indigo-700 dark:text-indigo-200 font-medium"></ul>
+        <button onclick="generateQuestion()" class="mt-6 w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold text-lg shadow-lg active:scale-95 transition-all">Lanjut ke Pertanyaan Berikutnya</button>
     </div>
 </div>
 
 <div id="panel-result" class="modal-glass rounded-[3rem] p-12 w-full max-w-md hidden flex-col items-center gap-8 text-center animate-pop-in">
-    <div class="w-28 h-28 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center shadow-2xl shadow-orange-500/40 text-white mb-2">
+    <div class="w-28 h-28 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center shadow-2xl shadow-blue-500/40 text-white mb-2">
         <svg class="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
     </div>
     <div>
@@ -96,86 +95,57 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); backg
 
 <script>
 const urlParams = new URLSearchParams(window.location.search);
-const difficulty = urlParams.get('diff') || 'easy';
-const opParam = urlParams.get('op') || 'add';
 const mode = urlParams.get('mode') || 'timer';
+let vocabData = []; let currentQuestion = null; let correctCount = 0; let wrongCount = 0; let timeLeft = 60; let timerId = null; let isChecking = false;
 
-let correctCount = 0; let wrongCount = 0; let timeLeft = 60; let timerId = null; let currentAnswer = null; let isChecking = false;
-
-function showAlert(message, type = 'error') {
-    const container = document.getElementById('alert-container');
-    const alertDiv = document.createElement('div');
-    const bgColor = type === 'error' ? 'bg-red-500' : 'bg-green-500';
-    alertDiv.className = `toast-alert px-8 py-4 rounded-2xl text-white font-bold shadow-2xl ${bgColor} text-lg`;
-    alertDiv.innerText = message;
-    container.appendChild(alertDiv);
-    setTimeout(() => { alertDiv.style.opacity = '0'; alertDiv.style.transform = 'translate(-50%, -20px)'; alertDiv.style.transition = 'all 0.3s ease'; setTimeout(() => alertDiv.remove(), 300); }, 1500);
-}
-
-function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-
-function generateQuestion() {
-    isChecking = false; document.getElementById('math-input').value = '';
-    const btns = document.getElementById('answer-mcq').querySelectorAll('button');
-    btns.forEach(b => { b.className = "py-5 rounded-3xl bg-white dark:bg-slate-800 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white text-slate-800 dark:text-white font-black text-3xl border-2 border-slate-200 dark:border-slate-700 hover:border-blue-600 dark:hover:border-blue-600 shadow-sm transition-all active:scale-95"; });
-
-    let min = 10, max = 99;
-    if(difficulty === 'medium') max = 999; else if(difficulty === 'hard') max = 9999;
-    let num1 = getRandomInt(min, max); let num2 = getRandomInt(min, max); let questionStr = "";
-
-    if(opParam === 'add') { currentAnswer = num1 + num2; questionStr = `${num1} + ${num2}`; } 
-    else if(opParam === 'sub') { if(num1 < num2) [num1, num2] = [num2, num1]; currentAnswer = num1 - num2; questionStr = `${num1} - ${num2}`; } 
-    else if(opParam === 'mul') { if(difficulty !== 'easy') { num1 = getRandomInt(10, 99); num2 = getRandomInt(10, 99); } currentAnswer = num1 * num2; questionStr = `${num1} × ${num2}`; } 
-    else if(opParam === 'div') { if(difficulty !== 'easy') num2 = getRandomInt(10, 99); let product = num1 * num2; currentAnswer = num1; questionStr = `${product} ÷ ${num2}`; }
-
-    document.getElementById('math-question').innerText = questionStr; renderAnswers();
-}
-
-function renderAnswers() {
-    const isInput = Math.random() < 0.3;
-    const mcqContainer = document.getElementById('answer-mcq'); const inputContainer = document.getElementById('answer-input');
-    if(isInput) { mcqContainer.classList.add('hidden'); inputContainer.classList.remove('hidden'); document.getElementById('math-input').focus(); } 
-    else {
-        inputContainer.classList.add('hidden'); mcqContainer.classList.remove('hidden');
-        let answers = [currentAnswer];
-        while(answers.length < 4) { let offset = getRandomInt(1, 20) * (Math.random() > 0.5 ? 1 : -1); let wrongAns = currentAnswer + offset; if(wrongAns >= 0 && !answers.includes(wrongAns)) answers.push(wrongAns); }
-        answers.sort(() => Math.random() - 0.5);
-        const btns = mcqContainer.querySelectorAll('button'); btns.forEach((btn, idx) => { btn.innerText = answers[idx]; });
+async function loadVocabData() {
+    try {
+        const response = await fetch('/database/vocab.json');
+        if (!response.ok) throw new Error('Gagal memuat bank soal');
+        vocabData = await response.json();
+        vocabData = vocabData.sort(() => Math.random() - 0.5);
+        generateQuestion();
+    } catch (error) {
+        document.getElementById('vocab-question').innerText = "Oops! Gagal memuat data.";
+        document.getElementById('vocab-translation').innerText = "Pastikan path ke vocab.json sudah benar.";
     }
 }
-
-function checkAnswer(btn) {
-    if(isChecking) return; isChecking = true;
-    if(parseInt(btn.innerText) === currentAnswer) {
-        correctCount++; document.getElementById('score-correct').innerText = correctCount;
-        btn.classList.remove('bg-white', 'dark:bg-slate-800', 'hover:bg-blue-600', 'text-slate-800', 'dark:text-white', 'border-slate-200', 'dark:border-slate-700');
-        btn.classList.add('bg-green-500', 'text-white', 'border-green-600');
-        setTimeout(generateQuestion, 1000);
-    } else {
-        showAlert("Salah!"); wrongCount++; document.getElementById('score-wrong').innerText = wrongCount;
-        btn.classList.remove('bg-white', 'dark:bg-slate-800', 'hover:bg-blue-600', 'text-slate-800', 'dark:text-white', 'border-slate-200', 'dark:border-slate-700');
-        btn.classList.add('bg-red-500', 'text-white', 'border-red-600');
-        const btns = document.getElementById('answer-mcq').querySelectorAll('button');
-        btns.forEach(b => {
-            if(parseInt(b.innerText) === currentAnswer) {
-                b.classList.remove('bg-white', 'dark:bg-slate-800', 'hover:bg-blue-600', 'text-slate-800', 'dark:text-white', 'border-slate-200', 'dark:border-slate-700');
-                b.classList.add('bg-green-500', 'text-white', 'border-green-600');
-            }
-        });
-        setTimeout(generateQuestion, 1500);
-    }
-}
-
-function checkInputAnswer() {
-    if(isChecking) return; const val = document.getElementById('math-input').value; if(val === '') return;
-    isChecking = true;
-    if(parseInt(val) === currentAnswer) { showAlert("Benar!", "success"); correctCount++; document.getElementById('score-correct').innerText = correctCount; setTimeout(generateQuestion, 1000); } 
-    else { wrongCount++; document.getElementById('score-wrong').innerText = wrongCount; showAlert(`Salah! Jawaban: ${currentAnswer}`); setTimeout(generateQuestion, 2000); }
-}
-
-document.getElementById('math-input').addEventListener('keypress', function(e) { if(e.key === 'Enter') checkInputAnswer(); });
 
 function updateTimerDisplay() { let m = Math.floor(timeLeft / 60).toString().padStart(2, '0'); let s = (timeLeft % 60).toString().padStart(2, '0'); document.getElementById('game-timer').innerText = `${m}:${s}`; }
+
+function generateQuestion() {
+    if (vocabData.length === 0) return;
+    isChecking = false; document.getElementById('explanation-box').classList.add('hidden');
+    const randomIndex = Math.floor(Math.random() * vocabData.length); currentQuestion = vocabData[randomIndex];
+    document.getElementById('vocab-question').innerText = currentQuestion.q; document.getElementById('vocab-translation').innerText = currentQuestion.t;
+    const btns = document.getElementById('answer-mcq').querySelectorAll('button');
+    btns.forEach((btn, idx) => {
+        btn.innerHTML = `<span>${currentQuestion.options[idx]}</span>`;
+        btn.className = "py-5 px-6 rounded-3xl bg-white dark:bg-slate-800 hover:bg-indigo-600 hover:text-white text-slate-800 dark:text-white font-bold text-xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-600 shadow-sm transition-all active:scale-95 text-left flex justify-between items-center group";
+    });
+}
+
+function checkAnswer(selectedIndex, btn) {
+    if(isChecking) return; isChecking = true;
+    const btns = document.getElementById('answer-mcq').querySelectorAll('button');
+    if(selectedIndex === currentQuestion.correct) {
+        correctCount++; document.getElementById('score-correct').innerText = correctCount;
+        btn.classList.remove('bg-white', 'dark:bg-slate-800', 'hover:bg-indigo-600', 'text-slate-800', 'dark:text-white', 'border-slate-200', 'dark:border-slate-700');
+        btn.classList.add('bg-green-500', 'text-white', 'border-green-600');
+        btn.innerHTML += `<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+    } else {
+        wrongCount++; document.getElementById('score-wrong').innerText = wrongCount;
+        btn.classList.remove('bg-white', 'dark:bg-slate-800', 'hover:bg-indigo-600', 'text-slate-800', 'dark:text-white', 'border-slate-200', 'dark:border-slate-700');
+        btn.classList.add('bg-red-500', 'text-white', 'border-red-600');
+        btn.innerHTML += `<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+        const correctBtn = btns[currentQuestion.correct];
+        correctBtn.classList.remove('bg-white', 'dark:bg-slate-800', 'hover:bg-indigo-600', 'text-slate-800', 'dark:text-white', 'border-slate-200', 'dark:border-slate-700');
+        correctBtn.classList.add('bg-green-500', 'text-white', 'border-green-600');
+    }
+    const expList = document.getElementById('explanation-list'); expList.innerHTML = '';
+    currentQuestion.meanings.forEach(meaning => { let parts = meaning.split(':'); expList.innerHTML += `<li><span class="font-extrabold text-indigo-900 dark:text-indigo-300">${parts[0]}</span>: ${parts[1]}</li>`; });
+    document.getElementById('explanation-box').classList.remove('hidden');
+}
 
 function endGame() {
     document.getElementById('panel-gameplay').classList.add('hidden'); document.getElementById('panel-result').classList.remove('hidden'); document.getElementById('panel-result').classList.add('flex');
@@ -185,7 +155,7 @@ function endGame() {
 
 window.addEventListener('DOMContentLoaded', () => {
     if(mode === 'practice') { document.getElementById('timer-container').classList.add('hidden'); document.getElementById('btn-end-session').classList.remove('hidden'); }
-    generateQuestion();
+    loadVocabData();
     if(mode === 'timer') { timerId = setInterval(() => { timeLeft--; updateTimerDisplay(); if(timeLeft <= 0) { clearInterval(timerId); endGame(); } }, 1000); }
 });
 </script>
