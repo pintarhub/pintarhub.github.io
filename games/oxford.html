@@ -3,155 +3,117 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Baku & Tidak Baku - PintarHub</title>
+<title>Oxford 3000 - PintarHub</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-    tailwind.config = { darkMode: 'class' };
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-    }
-</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-:root {
-    --bg-base: #f8fafc;
-    --grad-1: hsla(350,100%,94%,0.5);
-    --grad-2: hsla(10,100%,96%,0.5);
-    --modal-bg: rgba(255, 255, 255, 0.85);
-    --modal-border: rgba(255, 255, 255, 1);
-}
-.dark {
-    --bg-base: #020617;
-    --grad-1: hsla(350,100%,15%,0.5);
-    --grad-2: hsla(10,100%,15%,0.5);
-    --modal-bg: rgba(2, 6, 23, 0.85);
-    --modal-border: rgba(255, 255, 255, 0.15);
-}
-body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); background-image: radial-gradient(at 0% 0%, var(--grad-1) 0, transparent 50%), radial-gradient(at 100% 100%, var(--grad-2) 0, transparent 50%); background-attachment: fixed; }
-.modal-glass { background: var(--modal-bg); backdrop-filter: blur(30px); border: 1px solid var(--modal-border); box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5); }
-@keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
-.animate-pop-in { animation: popIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+body { font-family: 'Inter', sans-serif; background: #f8fafc; background-image: radial-gradient(at 0% 0%, hsla(150,100%,94%,0.5) 0, transparent 50%), radial-gradient(at 100% 100%, hsla(200,100%,96%,0.5) 0, transparent 50%); background-attachment: fixed; }
+.glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); }
+.hover-lift { transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.hover-lift:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.15); }
+@keyframes slideDownHeader { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.header-anim { animation: slideDownHeader 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+.flip-card { perspective: 1000px; }
+.flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+.flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+.flip-card-front, .flip-card-back { position: absolute; inset: 0; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 3rem; padding: 2rem; }
+.flip-card-front { background: white; border: 2px solid #e2e8f0; }
+.flip-card-back { background: #0f172a; color: white; transform: rotateY(180deg); border: 2px solid #1e293b; }
 ::-webkit-scrollbar { width: 0px; }
 </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4 text-slate-800 dark:text-slate-100 transition-colors duration-300">
+<body class="flex flex-col min-h-screen text-slate-800">
 
-<div id="panel-gameplay" class="modal-glass rounded-[3rem] p-8 sm:p-10 w-full max-w-2xl flex flex-col gap-6 animate-pop-in relative overflow-hidden">
-    <div class="flex justify-between items-center bg-white/70 dark:bg-slate-800/70 px-6 py-4 rounded-3xl border border-white dark:border-slate-700 shadow-sm transition-colors">
-        <div class="flex gap-4">
-            <div class="text-green-600 dark:text-green-400 font-bold text-lg">Benar: <span id="score-correct" class="text-2xl font-black ml-1">0</span></div>
-            <div class="text-rose-600 dark:text-rose-400 font-bold text-lg">Salah: <span id="score-wrong" class="text-2xl font-black ml-1">0</span></div>
-        </div>
+<header class="sticky top-0 z-40 pt-6 px-4 sm:px-8 header-anim">
+    <div class="glass-panel rounded-[2rem] px-6 py-4 flex items-center justify-between max-w-4xl mx-auto shadow-sm">
         <div class="flex items-center gap-3">
-            <div id="timer-container" class="flex items-center gap-2">
-                <svg class="w-7 h-7 text-rose-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span id="game-timer" class="text-rose-600 dark:text-rose-400 font-black text-3xl tracking-widest">01:00</span>
+            <button onclick="window.location.href='index.html'" class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            <h1 class="text-xl font-black tracking-tight text-slate-800">The Oxford 3000</h1>
+        </div>
+        <span id="card-counter" class="text-sm font-bold text-slate-500 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm">0 / 0</span>
+    </div>
+</header>
+
+<main class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 py-12 flex flex-col items-center justify-center pb-36">
+    <div class="text-center mb-8">
+        <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tap kartu untuk melihat arti</p>
+    </div>
+
+    <div class="w-full max-w-md h-96 flip-card cursor-pointer group" onclick="toggleFlip()">
+        <div id="flashcard-inner" class="flip-card-inner shadow-xl shadow-slate-200/50 group-hover:-translate-y-2 transition-transform duration-300">
+            <div class="flip-card-front">
+                <h2 id="word-eng" class="text-5xl font-black text-slate-800 tracking-tight mb-2">Memuat...</h2>
             </div>
-            <button id="btn-end-session" onclick="endGame()" class="hidden bg-slate-900 dark:bg-slate-700 text-white px-6 py-3 rounded-2xl font-bold text-sm hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors shadow-lg active:scale-95">Akhiri Sesi</button>
+            <div class="flip-card-back">
+                <h2 id="word-id" class="text-3xl sm:text-4xl font-black text-white tracking-tight mb-4 leading-tight">Memuat...</h2>
+            </div>
         </div>
     </div>
-    
-    <div class="py-12 text-center px-4">
-        <p class="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">Apakah kata ini baku?</p>
-        <h1 id="baku-question" class="text-6xl sm:text-7xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm leading-tight transition-colors">Memuat...</h1>
-    </div>
 
-    <div id="answer-options" class="grid grid-cols-2 gap-5">
-        <button onclick="checkAnswer(true, this)" class="py-8 rounded-3xl bg-white dark:bg-slate-800 hover:bg-emerald-500 dark:hover:bg-emerald-600 hover:text-white text-slate-800 dark:text-white font-black text-3xl border-2 border-slate-200 dark:border-slate-700 hover:border-emerald-500 shadow-sm transition-all active:scale-95">BAKU</button>
-        <button onclick="checkAnswer(false, this)" class="py-8 rounded-3xl bg-white dark:bg-slate-800 hover:bg-rose-500 dark:hover:bg-rose-600 hover:text-white text-slate-800 dark:text-white font-black text-3xl border-2 border-slate-200 dark:border-slate-700 hover:border-rose-500 shadow-sm transition-all active:scale-95">TIDAK BAKU</button>
+    <div class="flex gap-6 mt-12 w-full max-w-md">
+        <button onclick="prevCard()" class="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-black text-lg hover:bg-slate-50 transition-colors shadow-sm active:scale-95">SEBELUMNYA</button>
+        <button onclick="nextCard()" class="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black text-lg hover:bg-slate-800 transition-colors shadow-xl shadow-slate-900/20 active:scale-95">SELANJUTNYA</button>
     </div>
-
-    <div id="explanation-box" class="hidden mt-4 p-8 bg-slate-50 dark:bg-slate-800/80 border-2 border-slate-200 dark:border-slate-700 rounded-3xl animate-pop-in text-center transition-colors">
-        <h3 class="font-bold text-slate-500 dark:text-slate-400 mb-2 text-sm uppercase tracking-widest">Bentuk Baku Menurut KBBI:</h3>
-        <p id="correct-word-display" class="text-4xl font-black text-slate-800 dark:text-white mb-4"></p>
-        <p id="explanation-text" class="text-slate-600 dark:text-slate-300 font-medium text-lg leading-relaxed"></p>
-        <button onclick="generateQuestion()" class="mt-8 w-full py-4 bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white rounded-2xl font-bold text-lg shadow-lg active:scale-95 transition-all">Lanjut ke Kata Berikutnya</button>
-    </div>
-</div>
-
-<div id="panel-result" class="modal-glass rounded-[3rem] p-12 w-full max-w-md hidden flex-col items-center gap-8 text-center animate-pop-in">
-    <div class="w-28 h-28 bg-gradient-to-br from-rose-400 to-red-500 rounded-full flex items-center justify-center shadow-2xl shadow-red-500/40 text-white mb-2">
-        <svg class="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-    </div>
-    <div>
-        <h2 id="result-title" class="text-4xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">Sesi Selesai!</h2>
-        <p class="text-slate-500 dark:text-slate-400 font-bold text-lg">Berikut adalah hasil belajarmu:</p>
-    </div>
-    <div class="flex gap-10">
-        <div>
-            <div class="text-5xl font-black text-green-500" id="final-correct">0</div>
-            <div class="text-sm text-slate-400 font-bold uppercase tracking-widest mt-2">Benar</div>
-        </div>
-        <div>
-            <div class="text-5xl font-black text-rose-500" id="final-wrong">0</div>
-            <div class="text-sm text-slate-400 font-bold uppercase tracking-widest mt-2">Salah</div>
-        </div>
-    </div>
-    <button onclick="window.location.href='/index.html'" class="w-full mt-4 py-5 rounded-3xl bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white font-bold text-xl shadow-xl transition-all hover:-translate-y-1">Kembali ke Dashboard</button>
-</div>
+</main>
 
 <script>
-const urlParams = new URLSearchParams(window.location.search);
-const mode = urlParams.get('mode') || 'timer';
-let bakuData = []; let currentQuestion = null; let correctCount = 0; let wrongCount = 0; let timeLeft = 60; let timerId = null; let isChecking = false;
+let flashcards = [];
+let currentIndex = 0;
+let isFlipped = false;
 
-async function loadBakuData() {
+async function loadFlashcards() {
     try {
-        const response = await fetch('/database/baku.json');
-        if (!response.ok) throw new Error('Gagal memuat bank soal');
-        bakuData = await response.json();
-        bakuData = bakuData.sort(() => Math.random() - 0.5);
-        generateQuestion();
+        const response = await fetch('/database/oxford.json');
+        if (!response.ok) throw new Error('Gagal');
+        flashcards = await response.json();
+        renderCard();
     } catch (error) {
-        document.getElementById('baku-question').innerText = "Gagal memuat data.";
+        document.getElementById('word-eng').innerText = "Oops!";
+        document.getElementById('word-id').innerText = "Data gagal dimuat.";
+        if(window.location.protocol === 'file:') {
+            alert("Buka file ini menggunakan Live Server di VS Code agar JSON bisa terbaca.");
+        }
     }
 }
 
-function updateTimerDisplay() { let m = Math.floor(timeLeft / 60).toString().padStart(2, '0'); let s = (timeLeft % 60).toString().padStart(2, '0'); document.getElementById('game-timer').innerText = `${m}:${s}`; }
-
-function generateQuestion() {
-    if (bakuData.length === 0) return;
-    isChecking = false; document.getElementById('explanation-box').classList.add('hidden');
-    const randomIndex = Math.floor(Math.random() * bakuData.length); currentQuestion = bakuData[randomIndex];
-    document.getElementById('baku-question').innerText = currentQuestion.word;
-    const btns = document.getElementById('answer-options').querySelectorAll('button');
-    btns[0].className = "py-8 rounded-3xl bg-white dark:bg-slate-800 hover:bg-emerald-500 dark:hover:bg-emerald-600 hover:text-white text-slate-800 dark:text-white font-black text-3xl border-2 border-slate-200 dark:border-slate-700 hover:border-emerald-500 shadow-sm transition-all active:scale-95";
-    btns[1].className = "py-8 rounded-3xl bg-white dark:bg-slate-800 hover:bg-rose-500 dark:hover:bg-rose-600 hover:text-white text-slate-800 dark:text-white font-black text-3xl border-2 border-slate-200 dark:border-slate-700 hover:border-rose-500 shadow-sm transition-all active:scale-95";
-}
-
-function checkAnswer(isUserGuessBaku, btn) {
-    if(isChecking) return; isChecking = true;
-    const btns = document.getElementById('answer-options').querySelectorAll('button');
-    const correctBtnIndex = currentQuestion.isBaku ? 0 : 1;
+function renderCard() {
+    if (flashcards.length === 0) return;
+    const card = flashcards[currentIndex];
+    document.getElementById('word-eng').innerText = card.en;
+    document.getElementById('word-id').innerText = card.id;
+    document.getElementById('card-counter').innerText = `${currentIndex + 1} / ${flashcards.length}`;
     
-    if(isUserGuessBaku === currentQuestion.isBaku) {
-        correctCount++; document.getElementById('score-correct').innerText = correctCount;
-        btn.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-800', 'dark:text-white', 'border-slate-200', 'dark:border-slate-700');
-        btn.classList.add('bg-green-500', 'text-white', 'border-green-600');
-    } else {
-        wrongCount++; document.getElementById('score-wrong').innerText = wrongCount;
-        btn.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-800', 'dark:text-white', 'border-slate-200', 'dark:border-slate-700');
-        btn.classList.add('bg-red-500', 'text-white', 'border-red-600');
-        btns[correctBtnIndex].classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-800', 'dark:text-white', 'border-slate-200', 'dark:border-slate-700');
-        btns[correctBtnIndex].classList.add('bg-green-500', 'text-white', 'border-green-600');
+    const cardEl = document.querySelector('.flip-card');
+    if(isFlipped) {
+        cardEl.classList.remove('flipped');
+        isFlipped = false;
     }
-    document.getElementById('correct-word-display').innerText = currentQuestion.bakuForm;
-    document.getElementById('explanation-text').innerText = currentQuestion.meaning;
-    document.getElementById('explanation-box').classList.remove('hidden');
 }
 
-function endGame() {
-    document.getElementById('panel-gameplay').classList.add('hidden'); document.getElementById('panel-result').classList.remove('hidden'); document.getElementById('panel-result').classList.add('flex');
-    document.getElementById('final-correct').innerText = correctCount; document.getElementById('final-wrong').innerText = wrongCount;
-    if(mode === 'practice') document.getElementById('result-title').innerText = "Latihan Selesai!"; else document.getElementById('result-title').innerText = "Waktu Habis!";
+function toggleFlip() {
+    const card = document.querySelector('.flip-card');
+    card.classList.toggle('flipped');
+    isFlipped = !isFlipped;
+}
+
+function nextCard() {
+    if(currentIndex < flashcards.length - 1) {
+        currentIndex++;
+        renderCard();
+    }
+}
+
+function prevCard() {
+    if(currentIndex > 0) {
+        currentIndex--;
+        renderCard();
+    }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    if(mode === 'practice') { document.getElementById('timer-container').classList.add('hidden'); document.getElementById('btn-end-session').classList.remove('hidden'); }
-    loadBakuData();
-    if(mode === 'timer') { timerId = setInterval(() => { timeLeft--; updateTimerDisplay(); if(timeLeft <= 0) { clearInterval(timerId); endGame(); } }, 1000); }
+    loadFlashcards();
 });
 </script>
 </body>
