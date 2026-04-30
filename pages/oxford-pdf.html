@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baca PDF - PintarHub</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode: 'class' };
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root {
+    --bg-base: #f8fafc;
+    --grad-1: hsla(217,100%,94%,0.5);
+    --grad-2: hsla(280,100%,96%,0.5);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.8);
+}
+.dark {
+    --bg-base: #020617;
+    --grad-1: hsla(217,100%,15%,0.5);
+    --grad-2: hsla(280,100%,15%,0.5);
+    --glass-bg: rgba(15, 23, 42, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); background-image: radial-gradient(at 0% 0%, var(--grad-1) 0, transparent 50%), radial-gradient(at 100% 100%, var(--grad-2) 0, transparent 50%); background-attachment: fixed; }
+.glass-panel { background: var(--glass-bg); backdrop-filter: blur(24px); border: 1px solid var(--glass-border); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); }
+.hover-lift { transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.hover-lift:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.15); }
+@keyframes slideDownHeader { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.header-anim { animation: slideDownHeader 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+::-webkit-scrollbar { width: 0px; }
+</style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300">
+
+<header class="sticky top-0 z-40 pt-6 px-4 sm:px-8 header-anim">
+    <div class="glass-panel rounded-[2rem] px-6 py-4 flex items-center gap-4 max-w-7xl mx-auto shadow-sm">
+        <button onclick="window.location.href='/pages/latihan'" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <img src="/icon/icon.svg" alt="PintarHub" class="w-8 h-8 object-contain">
+        <h1 class="text-xl sm:text-2xl font-black tracking-tight text-slate-800 dark:text-white">Oxford 3000 PDF</h1>
+    </div>
+</header>
+
+<main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 pb-10">
+    <div class="glass-panel rounded-[3rem] p-4 sm:p-6 h-[80vh] flex flex-col">
+        <iframe src="/pages/oxford3000.pdf" class="w-full h-full rounded-[2rem] border-2 border-slate-200 dark:border-slate-700 bg-white" title="PDF Viewer"></iframe>
+    </div>
+</main>
+
+</body>
+</html>

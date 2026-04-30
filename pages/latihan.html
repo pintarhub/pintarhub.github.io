@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latihan - PintarHub</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode: 'class' };
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+    function toggleDarkMode() {
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root {
+    --bg-base: #f8fafc;
+    --grad-1: hsla(217,100%,94%,0.5);
+    --grad-2: hsla(280,100%,96%,0.5);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.8);
+}
+.dark {
+    --bg-base: #020617;
+    --grad-1: hsla(217,100%,15%,0.5);
+    --grad-2: hsla(280,100%,15%,0.5);
+    --glass-bg: rgba(15, 23, 42, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); background-image: radial-gradient(at 0% 0%, var(--grad-1) 0, transparent 50%), radial-gradient(at 100% 100%, var(--grad-2) 0, transparent 50%); background-attachment: fixed; scroll-behavior: smooth; }
+.glass-panel { background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); }
+.hover-lift { transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.hover-lift:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.15); }
+.reveal-blur { opacity: 0; filter: blur(15px); transform: translateY(40px); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.reveal-blur.active { opacity: 1; filter: blur(0); transform: translateY(0); }
+@keyframes slideDownHeader { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.header-anim { animation: slideDownHeader 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+@keyframes slideUpFade { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.nav-bottom-anim { animation: slideUpFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+::-webkit-scrollbar { width: 0px; }
+</style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300">
+
+<header class="sticky top-0 z-40 pt-6 px-4 sm:px-8 header-anim">
+    <div class="glass-panel rounded-[2rem] px-6 py-4 flex items-center justify-between max-w-7xl mx-auto shadow-sm">
+        <h1 class="text-2xl font-black tracking-tight text-slate-800 dark:text-white">Modul Belajar</h1>
+        <div class="flex items-center gap-4">
+            <div class="px-4 py-2 bg-white/80 dark:bg-slate-800/80 rounded-full border border-white dark:border-slate-700 flex items-center gap-2 shadow-sm transition-colors">
+                <span class="text-sm font-bold text-slate-600 dark:text-slate-300">4 Kelas Tersedia</span>
+            </div>
+            <button onclick="toggleDarkMode()" class="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-600 dark:text-slate-300 hover:scale-105 transition-all">
+                <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </div>
+</header>
+
+<main id="main-scroll" class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-8 pb-36">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 reveal-blur">
+        
+        <div class="glass-panel rounded-[2.5rem] p-8 flex flex-col hover-lift cursor-pointer border-blue-500/20">
+            <div class="w-16 h-16 rounded-[1.2rem] bg-blue-50 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-6 transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+            </div>
+            <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2 transition-colors">Penalaran Matematika</h3>
+            <p class="text-slate-500 dark:text-slate-400 font-medium mb-8 flex-grow transition-colors">Pelajari konsep dasar hingga mahir untuk menaklukkan soal logika angka.</p>
+            <div class="mt-auto pt-6 border-t border-slate-200/50 dark:border-slate-700 flex justify-between items-center transition-colors">
+                <span class="text-sm font-bold text-slate-400 dark:text-slate-500">12 Bab Tersedia</span>
+                <button class="px-6 py-2 bg-slate-900 dark:bg-blue-600 text-white rounded-xl font-bold text-sm transition-colors">Buka Modul</button>
+            </div>
+        </div>
+
+        <div class="glass-panel rounded-[2.5rem] p-8 flex flex-col hover-lift cursor-pointer border-rose-500/20">
+            <div class="w-16 h-16 rounded-[1.2rem] bg-rose-50 dark:bg-rose-500/20 text-rose-500 dark:text-rose-400 flex items-center justify-center mb-6 transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253"></path></svg>
+            </div>
+            <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2 transition-colors">Literasi Bahasa Indonesia</h3>
+            <p class="text-slate-500 dark:text-slate-400 font-medium mb-8 flex-grow transition-colors">Pahami struktur paragraf, ide pokok, dan analisis teks panjang.</p>
+            <div class="mt-auto pt-6 border-t border-slate-200/50 dark:border-slate-700 flex justify-between items-center transition-colors">
+                <span class="text-sm font-bold text-slate-400 dark:text-slate-500">8 Bab Tersedia</span>
+                <button class="px-6 py-2 bg-slate-900 dark:bg-rose-600 text-white rounded-xl font-bold text-sm transition-colors">Buka Modul</button>
+            </div>
+        </div>
+
+        <div class="glass-panel rounded-[2.5rem] p-8 flex flex-col hover-lift cursor-pointer border-indigo-500/20">
+            <div class="w-16 h-16 rounded-[1.2rem] bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-6 transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+            </div>
+            <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2 transition-colors">Literasi Bahasa Inggris</h3>
+            <p class="text-slate-500 dark:text-slate-400 font-medium mb-8 flex-grow transition-colors">Kuasai reading comprehension dan vocabulary akademik SNBT.</p>
+            <div class="mt-auto pt-6 border-t border-slate-200/50 dark:border-slate-700 flex justify-between items-center transition-colors">
+                <span class="text-sm font-bold text-slate-400 dark:text-slate-500">10 Bab Tersedia</span>
+                <button class="px-6 py-2 bg-slate-900 dark:bg-indigo-600 text-white rounded-xl font-bold text-sm transition-colors">Buka Modul</button>
+            </div>
+        </div>
+
+        <div class="glass-panel rounded-[2.5rem] p-8 flex flex-col hover-lift cursor-pointer border-emerald-500/20" onclick="window.location.href='/pages/oxford-pdf.html'">
+            <div class="w-16 h-16 rounded-[1.2rem] bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-6 transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            </div>
+            <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2 transition-colors">PDF Oxford 3000</h3>
+            <p class="text-slate-500 dark:text-slate-400 font-medium mb-8 flex-grow transition-colors">Buka dan baca dokumen lengkap Oxford 3000 English Vocabulary.</p>
+            <div class="mt-auto pt-6 border-t border-slate-200/50 dark:border-slate-700 flex justify-between items-center transition-colors">
+                <span class="text-sm font-bold text-slate-400 dark:text-slate-500">Dokumen Lengkap</span>
+                <button class="px-6 py-2 bg-slate-900 dark:bg-emerald-600 text-white rounded-xl font-bold text-sm transition-colors">Buka PDF</button>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<div class="fixed bottom-6 inset-x-0 mx-auto z-50 flex justify-center w-full px-4 nav-bottom-anim">
+    <nav class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/60 dark:border-slate-700 rounded-[2rem] px-3 py-3 flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_40px_rgba(0,0,0,0.5)] w-full max-w-[320px] transition-colors">
+        <a href="/" class="w-12 h-12 flex items-center justify-center rounded-[1.2rem] text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hover-lift">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </a>
+        <a href="/pages/latihan" class="w-12 h-12 flex items-center justify-center rounded-[1.2rem] bg-slate-900 dark:bg-slate-800 text-white dark:text-blue-400 shadow-md hover-lift">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253"></path></svg>
+        </a>
+        <a href="#" class="w-12 h-12 flex items-center justify-center rounded-[1.2rem] text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hover-lift">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+        </a>
+        <a href="/pages/profil" class="w-12 h-12 flex items-center justify-center rounded-[1.2rem] text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hover-lift">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+        </a>
+    </nav>
+</div>
+
+<script>
+function initScrollAnimation() {
+    const observerOptions = { root: document.getElementById('main-scroll'), rootMargin: '0px', threshold: 0.1 };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) setTimeout(() => { entry.target.classList.add('active'); }, index * 100);
+        });
+    }, observerOptions);
+    document.querySelectorAll('.reveal-blur').forEach((el) => { observer.observe(el); });
+}
+window.addEventListener('DOMContentLoaded', () => { setTimeout(initScrollAnimation, 50); });
+</script>
+</body>
+</html>
