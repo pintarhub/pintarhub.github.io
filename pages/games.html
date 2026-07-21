@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>PintarHub - Games Kognitif OLED</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+    </script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    /* Pitch Black Theme Hemat Baterai OLED */
+    body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: #000000;
+        color: #f4f4f5;
+        scroll-behavior: smooth; 
+    }
+
+    /* Card Super Rounded Minimalis (Bebas Lag GPU) */
+    .oled-card { 
+        background-color: #09090b; 
+        border: 1px solid #27272a; 
+    }
+
+    .modal-oled { 
+        background-color: #000000; 
+        border: 1px solid #3f3f46; 
+    }
+
+    .hover-lift { transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease; }
+    .hover-lift:hover { transform: translateY(-4px); border-color: #52525b; }
+
+    @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
+    .animate-pop-in { animation: popIn 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
+    ::-webkit-scrollbar { width: 0px; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-zinc-100 transition-colors duration-300 bg-black">
+
+<!-- Header Ringan Super Rounded -->
+<header class="sticky top-0 z-40 pt-6 px-4 sm:px-8 bg-black/90 border-b border-zinc-950">
+    <div class="oled-card rounded-[2rem] px-6 py-4 flex items-center justify-between max-w-7xl mx-auto">
+        <div class="flex items-center gap-3 sm:gap-4">
+            <a href="/" class="flex items-center gap-3">
+                <img src="/icon/icon.svg" alt="PintarHub Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-zinc-900 border border-zinc-800">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">PintarHub</h1>
+                    <p class="text-xs font-black text-zinc-500 uppercase tracking-widest">BRAIN GYM OLED</p>
+                </div>
+            </a>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="toggleFullscreen()" title="Toggle Fullscreen" class="px-4 py-2 rounded-2xl bg-zinc-900 border border-zinc-800 text-xs font-black text-zinc-300 hover:text-white hover:border-zinc-700 transition-all active:scale-95">
+                ⛶ Fullscreen
+            </button>
+        </div>
+    </div>
+</header>
+
+<main id="main-scroll" class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-8 pb-36">
+
+    <!-- Grid Kategori Games Langsung Utama -->
+    <section class="space-y-6">
+        <div class="flex justify-between items-center px-2">
+            <h2 class="text-2xl font-black text-white tracking-tight">Modul Latihan Kognitif</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- 1. Processing Speed & Working Memory -->
+            <div onclick="openGameModal('processing-speed')" class="oled-card rounded-[2.5rem] p-8 group cursor-pointer flex flex-col h-full hover-lift">
+                <div class="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 text-amber-400 flex items-center justify-center mb-6 text-3xl font-bold">
+                    ⚡
+                </div>
+                <h3 class="text-2xl font-black text-white mb-2">Processing Speed & Memory</h3>
+                <p class="text-xs text-zinc-400 font-medium mb-6 flex-grow">Flash Memory (<1s), Stroop Effect, dan Whack-a-Number untuk melatih kecepatan respon visual.</p>
+                <div class="flex items-center justify-between pt-4 border-t border-zinc-800/80">
+                    <span class="text-xs font-black text-amber-400">3 Mini-Games</span>
+                    <span class="text-sm font-black text-white group-hover:translate-x-1 transition-transform">Mulai →</span>
+                </div>
+            </div>
+
+            <!-- 2. Cognitive Flexibility -->
+            <div onclick="openGameModal('cognitive-flexibility')" class="oled-card rounded-[2.5rem] p-8 group cursor-pointer flex flex-col h-full hover-lift">
+                <div class="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 text-indigo-400 flex items-center justify-center mb-6 text-3xl font-bold">
+                    🧠
+                </div>
+                <h3 class="text-2xl font-black text-white mb-2">Cognitive Flexibility</h3>
+                <p class="text-xs text-zinc-400 font-medium mb-6 flex-grow">Latih kemampuan otak untuk berganti aturan secara instan (Task Switching & Impulse Control).</p>
+                <div class="flex items-center justify-between pt-4 border-t border-zinc-800/80">
+                    <span class="text-xs font-black text-indigo-400">3 Mini-Games</span>
+                    <span class="text-sm font-black text-white group-hover:translate-x-1 transition-transform">Mulai →</span>
+                </div>
+            </div>
+
+            <!-- 3. Visuospatial Ability -->
+            <div onclick="openGameModal('visuospatial')" class="oled-card rounded-[2.5rem] p-8 group cursor-pointer flex flex-col h-full hover-lift">
+                <div class="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 text-cyan-400 flex items-center justify-center mb-6 text-3xl font-bold">
+                    🧊
+                </div>
+                <h3 class="text-2xl font-black text-white mb-2">Visuospatial Ability</h3>
+                <p class="text-xs text-zinc-400 font-medium mb-6 flex-grow">Rotasi objek 3D secara mental dan analisis perspektif ruang untuk mengasah logika visual.</p>
+                <div class="flex items-center justify-between pt-4 border-t border-zinc-800/80">
+                    <span class="text-xs font-black text-cyan-400">3 Mini-Games</span>
+                    <span class="text-sm font-black text-white group-hover:translate-x-1 transition-transform">Mulai →</span>
+                </div>
+            </div>
+
+            <!-- 4. Short-Term Memory -->
+            <div onclick="openGameModal('short-term-memory')" class="oled-card rounded-[2.5rem] p-8 group cursor-pointer flex flex-col h-full hover-lift">
+                <div class="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 text-teal-400 flex items-center justify-center mb-6 text-3xl font-bold">
+                    🎯
+                </div>
+                <h3 class="text-2xl font-black text-white mb-2">Short-Term Memory</h3>
+                <p class="text-xs text-zinc-400 font-medium mb-6 flex-grow">Latihan Audio-Visual Span dan Chrono-Sequence untuk memperbesar daya tampung ingatan instan.</p>
+                <div class="flex items-center justify-between pt-4 border-t border-zinc-800/80">
+                    <span class="text-xs font-black text-teal-400">3 Mini-Games</span>
+                    <span class="text-sm font-black text-white group-hover:translate-x-1 transition-transform">Mulai →</span>
+                </div>
+            </div>
+
+            <!-- 5. Fluid & Linguistic Intelligence -->
+            <div onclick="openGameModal('fluid-linguistic')" class="oled-card rounded-[2.5rem] p-8 group cursor-pointer flex flex-col h-full hover-lift">
+                <div class="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 text-rose-400 flex items-center justify-center mb-6 text-3xl font-bold">
+                    💡
+                </div>
+                <h3 class="text-2xl font-black text-white mb-2">Fluid & Linguistic</h3>
+                <p class="text-xs text-zinc-400 font-medium mb-6 flex-grow">Pola matriks abstrak, Speed Math, dan Anagram Rush untuk performa pemecahan masalah baru.</p>
+                <div class="flex items-center justify-between pt-4 border-t border-zinc-800/80">
+                    <span class="text-xs font-black text-rose-400">3 Mini-Games</span>
+                    <span class="text-sm font-black text-white group-hover:translate-x-1 transition-transform">Mulai →</span>
+                </div>
+            </div>
+
+            <!-- 6. Spatial & Problem Solving -->
+            <div onclick="openGameModal('spatial-problem')" class="oled-card rounded-[2.5rem] p-8 group cursor-pointer flex flex-col h-full hover-lift">
+                <div class="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 text-purple-400 flex items-center justify-center mb-6 text-3xl font-bold">
+                    🧩
+                </div>
+                <h3 class="text-2xl font-black text-white mb-2">Spatial & Problem Solving</h3>
+                <p class="text-xs text-zinc-400 font-medium mb-6 flex-grow">Navigasi Memory Maze dan teka-teki balok efisien (Unblock) untuk logika strategi terstruktur.</p>
+                <div class="flex items-center justify-between pt-4 border-t border-zinc-800/80">
+                    <span class="text-xs font-black text-purple-400">3 Mini-Games</span>
+                    <span class="text-sm font-black text-white group-hover:translate-x-1 transition-transform">Mulai →</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</main>
+
+<!-- Bottom Nav Super Rounded OLED -->
+<div class="fixed bottom-6 inset-x-0 mx-auto z-50 flex justify-center w-full px-4">
+    <nav class="bg-zinc-950/90 border border-zinc-800 rounded-[2rem] px-3 py-3 flex items-center justify-between w-full max-w-[320px]">
+        <a href="/" class="w-12 h-12 flex items-center justify-center rounded-[1.2rem] text-zinc-500 hover:text-white hover:bg-zinc-900 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </a>
+        <a href="/pages/latihan.html" class="w-12 h-12 flex items-center justify-center rounded-[1.2rem] text-zinc-500 hover:text-white hover:bg-zinc-900 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253"></path></svg>
+        </a>
+        <!-- Active Tab: Games -->
+        <a href="/pages/games.html" class="w-12 h-12 flex items-center justify-center rounded-[1.2rem] bg-white text-black font-bold">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+        </a>
+        <a href="?pages/profile.html" class="w-12 h-12 flex items-center justify-center rounded-[1.2rem] text-zinc-500 hover:text-white hover:bg-zinc-900 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+        </a>
+    </nav>
+</div>
+
+<!-- Modal Popup Pilihan Mini-Game OLED -->
+<div id="module-select-modal" class="fixed inset-0 bg-black/95 z-[100] hidden flex-col items-center justify-center p-4">
+    <div class="modal-oled rounded-[2.5rem] p-8 sm:p-10 w-full max-w-lg flex flex-col gap-6 animate-pop-in relative overflow-hidden">
+        
+        <!-- Header Modal -->
+        <div class="flex items-center justify-between border-b border-zinc-800 pb-4">
+            <div>
+                <span id="modal-category-tag" class="text-xs font-black text-amber-400 uppercase tracking-widest">KATEGORI</span>
+                <h3 id="modal-category-title" class="text-2xl font-black text-white tracking-tight">Pilih Mini-Game</h3>
+            </div>
+            <button onclick="closeGameModal()" class="w-10 h-10 rounded-2xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white font-black flex items-center justify-center transition-colors">✕</button>
+        </div>
+
+        <!-- Wadah List Game -->
+        <div id="modal-game-list" class="flex flex-col gap-3 max-h-[60vh] overflow-y-auto pr-1">
+        </div>
+
+    </div>
+</div>
+
+<script>
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch((err) => {
+            console.log(`Error: ${err.message}`);
+        });
+    } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+    }
+}
+
+// Database Lengkap Mini-Game PintarHub (3 Games per Modul)
+const GAMES_DATABASE = {
+    'processing-speed': {
+        tag: 'PROCESSING SPEED & MEMORY',
+        title: 'Kecepatan & Memori',
+        games: [
+            {
+                title: 'Flash Memory (<1s)',
+                desc: 'Hafalkan digit angka yang muncul kurang dari 1 detik.',
+                icon: '⚡',
+                url: '/games/flash-memory.html'
+            },
+            {
+                title: 'Whack-a-Number',
+                desc: 'Uji kontrol impuls: Klik angka kecuali kelipatan 3.',
+                icon: '🎯',
+                url: '/games/whack-a-number.html'
+            },
+            {
+                title: 'Stroop Speedrun',
+                desc: 'Latih fokus dengan memisahkan warna tinta dan arti kata.',
+                icon: '🎨',
+                url: '/games/stroop-effect.html'
+            }
+        ]
+    },
+    'cognitive-flexibility': {
+        tag: 'COGNITIVE FLEXIBILITY',
+        title: 'Fleksibilitas Kognitif',
+        games: [
+            {
+                title: 'Rule Switcher',
+                desc: 'Berganti aturan logika warna & bentuk secara instan.',
+                icon: '🔄',
+                url: '/games/rule-switcher.html'
+            },
+            {
+                title: 'Color-Word Swap',
+                desc: 'Aturan berubah tiba-tiba antara membaca atau milih warna.',
+                icon: '🔀',
+                url: '/games/color-word-swap.html'
+            },
+            {
+                title: 'Task Switcher',
+                desc: 'Beralih cepat antara tebak Angka (Genap/Ganjil) dan Huruf.',
+                icon: '🔤',
+                url: '/games/task-switcher.html'
+            }
+        ]
+    },
+    'visuospatial': {
+        tag: 'VISUOSPATIAL ABILITY',
+        title: 'Kemampuan Visuospatial',
+        games: [
+            {
+                title: '3D Mental Rotation',
+                desc: 'Rotasikan objek secara mental untuk menemukan bentuk asli.',
+                icon: '🧊',
+                url: '/games/spatial-rotation.html'
+            },
+            {
+                title: 'Grid Orientation',
+                desc: 'Tebak posisi objek setelah grid diputar 90° atau 180°.',
+                icon: '🧭',
+                url: '/games/grid-orientation.html'
+            },
+            {
+                title: 'Spatial Fold',
+                desc: 'Tebak bentuk 3D yang tepat dari jaring-jaring 2D.',
+                icon: '📦',
+                url: '/games/spatial-fold.html'
+            }
+        ]
+    },
+    'short-term-memory': {
+        tag: 'SHORT-TERM MEMORY',
+        title: 'Memori Jangka Pendek',
+        games: [
+            {
+                title: 'Chrono-Sequence',
+                desc: 'Ingat dan tiru urutan nyala kotak di dalam grid.',
+                icon: '🎯',
+                url: '/games/chrono-sequence.html'
+            },
+            {
+                title: 'Audio-Visual Span',
+                desc: 'Ingat urutan suara angka vs angka visual yang berbeda.',
+                icon: '🎧',
+                url: '/games/audio-visual-span.html'
+            },
+            {
+                title: 'Card Rotation Match',
+                desc: 'Game buka kartu memori tapi posisi grid-nya muter!',
+                icon: '🃏',
+                url: '/games/card-rotation.html'
+            }
+        ]
+    },
+    'fluid-linguistic': {
+        tag: 'FLUID & LINGUISTIC INTELLIGENCE',
+        title: 'Fluid & Linguistic',
+        games: [
+            {
+                title: 'Speed Math Rush',
+                desc: 'Uji aritmatika cepat serba 3 detik per soal.',
+                icon: '💡',
+                url: '/games/speed-math.html'
+            },
+            {
+                title: 'Anagram Rush',
+                desc: 'Susun kata bahasa Indonesia sebanyak mungkin dalam 45s.',
+                icon: '🔤',
+                url: '/games/anagram-rush.html'
+            },
+            {
+                title: 'Missing Operator',
+                desc: 'Tebak operator matematika (+, -, x, /) yang hilang.',
+                icon: '➕',
+                url: '/games/missing-operator.html'
+            }
+        ]
+    },
+    'spatial-problem': {
+        tag: 'SPATIAL & PROBLEM SOLVING',
+        title: 'Spatial & Problem Solving',
+        games: [
+            {
+                title: 'Memory Maze Navigation',
+                desc: 'Navigasi labirin dalam kegelapan mengandalkan memori.',
+                icon: '🧩',
+                url: '/games/memory-maze.html'
+            },
+            {
+                title: 'Unblock Grid',
+                desc: 'Geser balok halangan buat buka jalan keluar paling efisien.',
+                icon: '🧱',
+                url: '/games/unblock-grid.html'
+            },
+            {
+                title: 'Matrix Pattern Logic',
+                desc: 'Tebak pola gambar selanjutnya ala tes IQ Raven.',
+                icon: '📊',
+                url: '/games/matrix-pattern.html'
+            }
+        ]
+    }
+};
+
+function openGameModal(categoryKey) {
+    const data = GAMES_DATABASE[categoryKey];
+    
+    if (!data) {
+        alert("Modul game ini sedang disiapkan, bro!");
+        return;
+    }
+
+    document.getElementById('modal-category-tag').innerText = data.tag;
+    document.getElementById('modal-category-title').innerText = data.title;
+
+    const listContainer = document.getElementById('modal-game-list');
+    listContainer.innerHTML = '';
+
+    data.games.forEach(game => {
+        const itemHtml = `
+            <div onclick="window.location.href='${game.url}'" class="group oled-card p-4 rounded-2xl border border-zinc-800 hover:border-zinc-700 cursor-pointer flex items-center justify-between transition-all hover-lift">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-800 text-amber-400 flex items-center justify-center text-2xl shrink-0">
+                        ${game.icon}
+                    </div>
+                    <div>
+                        <h4 class="text-base font-black text-white group-hover:text-amber-400 transition-colors">${game.title}</h4>
+                        <p class="text-xs text-zinc-400 font-medium">${game.desc}</p>
+                    </div>
+                </div>
+                <span class="text-lg font-black text-zinc-500 group-hover:translate-x-1 group-hover:text-white transition-all ml-2">→</span>
+            </div>
+        `;
+        listContainer.innerHTML += itemHtml;
+    });
+
+    const modal = document.getElementById('module-select-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeGameModal() {
+    const modal = document.getElementById('module-select-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+</script>
+</body>
+</html>

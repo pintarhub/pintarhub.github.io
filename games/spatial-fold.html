@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PintarHub - Spatial Fold</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }
+    </script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    :root {
+        --bg-base: #f8fafc;
+        --grad-1: hsla(217,100%,94%,0.5);
+        --grad-2: hsla(280,100%,96%,0.5);
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.8);
+    }
+    .dark {
+        --bg-base: #020617;
+        --grad-1: hsla(217,100%,15%,0.5);
+        --grad-2: hsla(280,100%,15%,0.5);
+        --glass-bg: rgba(15, 23, 42, 0.6);
+        --glass-border: rgba(255, 255, 255, 0.1);
+    }
+    body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: var(--bg-base);
+        background-image: radial-gradient(at 0% 0%, var(--grad-1) 0, transparent 50%), radial-gradient(at 100% 100%, var(--grad-2) 0, transparent 50%); 
+        background-attachment: fixed; 
+    }
+    .glass-panel { background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); }
+    @keyframes popIn { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+    .animate-pop-in { animation: popIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+    ::-webkit-scrollbar { width: 0px; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300">
+
+<header class="sticky top-0 z-40 pt-6 px-4 sm:px-8">
+    <div class="glass-panel rounded-[2rem] px-6 py-4 flex items-center justify-between max-w-7xl mx-auto shadow-sm">
+        <div class="flex items-center gap-3">
+            <a href="/pages/games.html" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300 hover:scale-105 transition-all">←</a>
+            <div>
+                <h1 class="text-xl font-black tracking-tight text-slate-800 dark:text-white">Spatial Fold</h1>
+                <p class="text-xs font-bold text-cyan-500">3D Folding Construction Test</p>
+            </div>
+        </div>
+        <button onclick="toggleDarkMode()" class="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-600 dark:text-slate-300">🌙</button>
+    </div>
+</header>
+
+<main class="flex-1 w-full max-w-2xl mx-auto px-4 py-10 flex flex-col items-center justify-center">
+    <div class="glass-panel w-full rounded-[3rem] p-6 sm:p-10 text-center relative overflow-hidden shadow-2xl flex flex-col items-center min-h-[480px] justify-between">
+        
+        <div class="w-full flex justify-between items-center text-sm font-black text-slate-400 border-b border-slate-200/50 dark:border-slate-700/50 pb-4">
+            <span>WAKTU: <span id="time-left" class="text-cyan-500">30</span>s</span>
+            <span>SKOR: <span id="score" class="text-emerald-500">0</span></span>
+        </div>
+
+        <div id="screen-start" class="flex flex-col items-center gap-6 my-auto animate-pop-in">
+            <div class="w-20 h-20 rounded-3xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center text-4xl shadow-inner">📦</div>
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white mb-2">Lipat Jaring-jaring 3D!</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm">Bayangkan jika pola 2D dilipat menjadi Kubus. Pilih bentuk **muka kubus** yang tepat saat dilipat!</p>
+            </div>
+            <button onclick="startGame()" class="px-8 py-4 rounded-2xl bg-cyan-500 hover:bg-cyan-600 text-white font-black text-lg shadow-lg shadow-cyan-500/30 transition-all hover:scale-105 active:scale-95">Mulai Main</button>
+        </div>
+
+        <div id="screen-play" class="hidden flex-col items-center gap-4 w-full my-auto animate-pop-in">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">POLA JARING-JARING 2D:</p>
+
+            <!-- 2D Net Pattern Visualizer -->
+            <div id="net-pattern" class="grid grid-cols-3 gap-1 p-2 rounded-2xl bg-white/80 dark:bg-slate-800/80 border border-cyan-400 shadow-md">
+            </div>
+
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">PILIH SISI KUBUS (SISI ATAS & SISI DEPAN) YANG BENAR:</p>
+
+            <!-- 2 Options -->
+            <div class="grid grid-cols-2 gap-4 w-full max-w-xs">
+                <button onclick="answer(0)" id="opt-0" class="p-4 rounded-3xl bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex flex-col items-center gap-1 shadow-sm hover:scale-105 active:scale-95 transition-all">
+                </button>
+                <button onclick="answer(1)" id="opt-1" class="p-4 rounded-3xl bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex flex-col items-center gap-1 shadow-sm hover:scale-105 active:scale-95 transition-all">
+                </button>
+            </div>
+        </div>
+
+        <div id="screen-result" class="hidden flex-col items-center gap-6 my-auto animate-pop-in">
+            <div class="text-6xl">📦</div>
+            <div>
+                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-1">Visualisasi 3D Mantap!</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Total Skor Akhir:</p>
+                <p id="final-score" class="text-5xl font-black text-cyan-500 mt-2">0</p>
+            </div>
+            <button onclick="startGame()" class="w-full py-4 rounded-2xl bg-cyan-500 hover:bg-cyan-600 text-white font-black shadow-lg transition-all hover:scale-105">Main Lagi</button>
+        </div>
+
+    </div>
+</main>
+
+<script>
+const SYMBOLS = ['⭐', '🔴', '🟩', '🔷', '⚡', '🌙'];
+
+let score = 0;
+let timeLeft = 30;
+let timerInterval;
+let correctOptionIndex = 0;
+
+function showScreen(id) {
+    ['screen-start', 'screen-play', 'screen-result'].forEach(s => {
+        const el = document.getElementById(s);
+        if(s === id) { el.classList.remove('hidden'); el.classList.add('flex'); }
+        else { el.classList.add('hidden'); el.classList.remove('flex'); }
+    });
+}
+
+function startGame() {
+    score = 0;
+    timeLeft = 30;
+    document.getElementById('score').innerText = score;
+    document.getElementById('time-left').innerText = timeLeft;
+    showScreen('screen-play');
+    nextQuestion();
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('time-left').innerText = timeLeft;
+        if(timeLeft <= 0) {
+            clearInterval(timerInterval);
+            document.getElementById('final-score').innerText = score;
+            showScreen('screen-result');
+        }
+    }, 1000);
+}
+
+function nextQuestion() {
+    // Acak 6 simbol unik untuk 6 muka kubus
+    const shuffled = [...SYMBOLS].sort(() => 0.5 - Math.random());
+    const [top, front, bottom, back, left, right] = shuffled;
+
+    // Render 2D Net Pattern (Cross Shape)
+    const netGrid = document.getElementById('net-pattern');
+    netGrid.innerHTML = `
+        <div class="h-10 w-10"></div><div class="h-10 w-10 border border-slate-300 dark:border-slate-700 flex items-center justify-center rounded-lg text-lg">${top}</div><div class="h-10 w-10"></div>
+        <div class="h-10 w-10 border border-slate-300 dark:border-slate-700 flex items-center justify-center rounded-lg text-lg">${left}</div><div class="h-10 w-10 border border-slate-300 dark:border-slate-700 flex items-center justify-center rounded-lg text-lg bg-cyan-500/10 font-bold">${front}</div><div class="h-10 w-10 border border-slate-300 dark:border-slate-700 flex items-center justify-center rounded-lg text-lg">${right}</div>
+        <div class="h-10 w-10"></div><div class="h-10 w-10 border border-slate-300 dark:border-slate-700 flex items-center justify-center rounded-lg text-lg">${bottom}</div><div class="h-10 w-10"></div>
+    `;
+
+    correctOptionIndex = Math.random() > 0.5 ? 0 : 1;
+    const wrongIndex = correctOptionIndex === 0 ? 1 : 0;
+
+    // Correct Option: Top & Front adjacent face match
+    document.getElementById(`opt-${correctOptionIndex}`).innerHTML = `
+        <span class="text-xs font-bold text-slate-400">Atas: ${top}</span>
+        <span class="text-xs font-bold text-slate-400">Depan: ${front}</span>
+        <span class="text-emerald-500 font-bold text-sm mt-1">✓ Berdampingan</span>
+    `;
+
+    // Wrong Option: Top paired with Opposite/Back face
+    document.getElementById(`opt-${wrongIndex}`).innerHTML = `
+        <span class="text-xs font-bold text-slate-400">Atas: ${top}</span>
+        <span class="text-xs font-bold text-slate-400">Depan: ${bottom}</span>
+        <span class="text-rose-500 font-bold text-sm mt-1">✕ Berlawanan</span>
+    `;
+}
+
+function answer(index) {
+    if(index === correctOptionIndex) {
+        score += 10;
+    } else {
+        score = Math.max(0, score - 5);
+    }
+    document.getElementById('score').innerText = score;
+    nextQuestion();
+}
+</script>
+</body>
+</html>

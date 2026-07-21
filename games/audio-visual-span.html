@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PintarHub - Audio-Visual Span</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }
+    </script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    :root {
+        --bg-base: #f8fafc;
+        --grad-1: hsla(217,100%,94%,0.5);
+        --grad-2: hsla(280,100%,96%,0.5);
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.8);
+    }
+    .dark {
+        --bg-base: #020617;
+        --grad-1: hsla(217,100%,15%,0.5);
+        --grad-2: hsla(280,100%,15%,0.5);
+        --glass-bg: rgba(15, 23, 42, 0.6);
+        --glass-border: rgba(255, 255, 255, 0.1);
+    }
+    body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: var(--bg-base);
+        background-image: radial-gradient(at 0% 0%, var(--grad-1) 0, transparent 50%), radial-gradient(at 100% 100%, var(--grad-2) 0, transparent 50%); 
+        background-attachment: fixed; 
+    }
+    .glass-panel { background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); }
+    @keyframes popIn { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+    .animate-pop-in { animation: popIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+    ::-webkit-scrollbar { width: 0px; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300">
+
+<header class="sticky top-0 z-40 pt-6 px-4 sm:px-8">
+    <div class="glass-panel rounded-[2rem] px-6 py-4 flex items-center justify-between max-w-7xl mx-auto shadow-sm">
+        <div class="flex items-center gap-3">
+            <a href="/pages/games.html" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300 hover:scale-105 transition-all">←</a>
+            <div>
+                <h1 class="text-xl font-black tracking-tight text-slate-800 dark:text-white">Audio-Visual Span</h1>
+                <p class="text-xs font-bold text-teal-500">Working Memory Span Test</p>
+            </div>
+        </div>
+        <button onclick="toggleDarkMode()" class="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-600 dark:text-slate-300">🌙</button>
+    </div>
+</header>
+
+<main class="flex-1 w-full max-w-2xl mx-auto px-4 py-10 flex flex-col items-center justify-center">
+    <div class="glass-panel w-full rounded-[3rem] p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl flex flex-col items-center min-h-[460px] justify-between">
+        
+        <div class="w-full flex justify-between items-center text-sm font-black text-slate-400 border-b border-slate-200/50 dark:border-slate-700/50 pb-4">
+            <span>LEVEL: <span id="level" class="text-teal-500">1</span></span>
+            <span>SKOR: <span id="score" class="text-emerald-500">0</span></span>
+        </div>
+
+        <div id="screen-start" class="flex flex-col items-center gap-6 my-auto animate-pop-in">
+            <div class="w-20 h-20 rounded-3xl bg-teal-500/10 text-teal-500 flex items-center justify-center text-4xl shadow-inner">🎧</div>
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white mb-2">Uji Kapasitas Memori!</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm">Perhatikan deretan angka yang muncul bergantian, lalu ketik ulang seluruh urutannya dengan benar!</p>
+            </div>
+            <button onclick="startGame()" class="px-8 py-4 rounded-2xl bg-teal-500 hover:bg-teal-600 text-white font-black text-lg shadow-lg shadow-teal-500/30 transition-all hover:scale-105 active:scale-95">Mulai Main</button>
+        </div>
+
+        <div id="screen-play" class="hidden flex-col items-center gap-6 w-full my-auto animate-pop-in">
+            <p id="status-text" class="text-xs font-bold text-amber-500 uppercase tracking-widest animate-pulse">HAFALKAN DERETAN ANGKA...</p>
+
+            <div id="digit-display" class="text-6xl sm:text-7xl font-black tracking-widest text-slate-900 dark:text-white my-6 font-mono h-20 flex items-center justify-center">
+                -
+            </div>
+        </div>
+
+        <div id="screen-input" class="hidden flex-col items-center gap-6 w-full max-w-xs my-auto animate-pop-in">
+            <p class="text-xs font-bold text-teal-500 uppercase tracking-widest">MASUKKAN URUTAN ANGKA:</p>
+            <form onsubmit="checkAnswer(event)" class="w-full flex flex-col gap-4">
+                <input type="text" id="user-input" autocomplete="off" autofocus class="w-full text-center text-3xl font-black py-4 rounded-2xl bg-white/80 dark:bg-slate-900/80 border-2 border-slate-200 dark:border-slate-700 focus:border-teal-500 outline-none tracking-widest text-slate-800 dark:text-white font-mono shadow-inner" placeholder="••••">
+                <button type="submit" class="w-full py-4 rounded-2xl bg-teal-500 hover:bg-teal-600 text-white font-black shadow-lg transition-all hover:scale-[1.02] active:scale-95">Periksa Jawaban</button>
+            </form>
+        </div>
+
+        <div id="screen-result" class="hidden flex-col items-center gap-6 my-auto animate-pop-in">
+            <div id="result-icon" class="text-6xl">🎧</div>
+            <div>
+                <h3 id="result-title" class="text-2xl font-black text-slate-800 dark:text-white mb-1">Daya Tampung Mantap!</h3>
+                <p id="result-desc" class="text-sm text-slate-500 dark:text-slate-400">Total Skor Akhir Kamu:</p>
+                <p id="final-score" class="text-5xl font-black text-teal-500 mt-2">0</p>
+            </div>
+            <button onclick="startGame()" class="w-full py-4 rounded-2xl bg-teal-500 hover:bg-teal-600 text-white font-black shadow-lg transition-all hover:scale-105">Coba Lagi</button>
+        </div>
+
+    </div>
+</main>
+
+<script>
+let level = 1;
+let score = 0;
+let digitsSequence = [];
+
+function showScreen(id) {
+    ['screen-start', 'screen-play', 'screen-input', 'screen-result'].forEach(s => {
+        const el = document.getElementById(s);
+        if(s === id) { el.classList.remove('hidden'); el.classList.add('flex'); }
+        else { el.classList.add('hidden'); el.classList.remove('flex'); }
+    });
+}
+
+function startGame() {
+    level = 1;
+    score = 0;
+    document.getElementById('level').innerText = level;
+    document.getElementById('score').innerText = score;
+    startRound();
+}
+
+function startRound() {
+    showScreen('screen-play');
+    document.getElementById('status-text').innerText = "HAFALKAN DERETAN ANGKA...";
+
+    const count = 2 + level; // Jumlah digit naik tiap level
+    digitsSequence = [];
+    for(let i=0; i<count; i++) {
+        digitsSequence.push(Math.floor(Math.random() * 10));
+    }
+
+    playDigitSequence(0);
+}
+
+function playDigitSequence(idx) {
+    const display = document.getElementById('digit-display');
+    if(idx >= digitsSequence.length) {
+        display.innerText = '';
+        setTimeout(() => {
+            showScreen('screen-input');
+            const inputField = document.getElementById('user-input');
+            inputField.value = '';
+            inputField.focus();
+        }, 300);
+        return;
+    }
+
+    display.innerText = digitsSequence[idx];
+    
+    // Tampilkan tiap digit selama 700ms
+    setTimeout(() => {
+        display.innerText = '';
+        setTimeout(() => {
+            playDigitSequence(idx + 1);
+        }, 200);
+    }, 700);
+}
+
+function checkAnswer(e) {
+    e.preventDefault();
+    const userAns = document.getElementById('user-input').value.trim();
+    const correctAns = digitsSequence.join('');
+
+    if(userAns === correctAns) {
+        score += level * 10;
+        level++;
+        document.getElementById('score').innerText = score;
+        document.getElementById('level').innerText = level;
+        startRound();
+    } else {
+        document.getElementById('result-icon').innerText = '💥';
+        document.getElementById('result-title').innerText = 'Urutan Terlepas!';
+        document.getElementById('result-desc').innerText = `Angka Asli: ${correctAns} | Jawabanmu: ${userAns || '-'}`;
+        document.getElementById('final-score').innerText = score;
+        showScreen('screen-result');
+    }
+}
+</script>
+</body>
+</html>

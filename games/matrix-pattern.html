@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PintarHub - Matrix Pattern Logic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }
+    </script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    :root {
+        --bg-base: #f8fafc;
+        --grad-1: hsla(217,100%,94%,0.5);
+        --grad-2: hsla(280,100%,96%,0.5);
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.8);
+    }
+    .dark {
+        --bg-base: #020617;
+        --grad-1: hsla(217,100%,15%,0.5);
+        --grad-2: hsla(280,100%,15%,0.5);
+        --glass-bg: rgba(15, 23, 42, 0.6);
+        --glass-border: rgba(255, 255, 255, 0.1);
+    }
+    body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: var(--bg-base);
+        background-image: radial-gradient(at 0% 0%, var(--grad-1) 0, transparent 50%), radial-gradient(at 100% 100%, var(--grad-2) 0, transparent 50%); 
+        background-attachment: fixed; 
+    }
+    .glass-panel { background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); }
+    @keyframes popIn { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+    .animate-pop-in { animation: popIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+    ::-webkit-scrollbar { width: 0px; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300">
+
+<header class="sticky top-0 z-40 pt-6 px-4 sm:px-8">
+    <div class="glass-panel rounded-[2rem] px-6 py-4 flex items-center justify-between max-w-7xl mx-auto shadow-sm">
+        <div class="flex items-center gap-3">
+            <a href="/pages/games.html" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300 hover:scale-105 transition-all">←</a>
+            <div>
+                <h1 class="text-xl font-black tracking-tight text-slate-800 dark:text-white">Matrix Pattern</h1>
+                <p class="text-xs font-bold text-purple-500">Raven Matrix IQ Test</p>
+            </div>
+        </div>
+        <button onclick="toggleDarkMode()" class="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-600 dark:text-slate-300">🌙</button>
+    </div>
+</header>
+
+<main class="flex-1 w-full max-w-2xl mx-auto px-4 py-10 flex flex-col items-center justify-center">
+    <div class="glass-panel w-full rounded-[3rem] p-6 sm:p-10 text-center relative overflow-hidden shadow-2xl flex flex-col items-center min-h-[480px] justify-between">
+        
+        <div class="w-full flex justify-between items-center text-sm font-black text-slate-400 border-b border-slate-200/50 dark:border-slate-700/50 pb-4">
+            <span>WAKTU: <span id="time-left" class="text-purple-500">30</span>s</span>
+            <span>SKOR: <span id="score" class="text-emerald-500">0</span></span>
+        </div>
+
+        <div id="screen-start" class="flex flex-col items-center gap-6 my-auto animate-pop-in">
+            <div class="w-20 h-20 rounded-3xl bg-purple-500/10 text-purple-500 flex items-center justify-center text-4xl shadow-inner">📊</div>
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white mb-2">Analisis Pola Matriks!</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm">Temukan urutan hubungan bentuk geometris, lalu pilih opsi yang melengkapi tanda tanya (**?**)!</p>
+            </div>
+            <button onclick="startGame()" class="px-8 py-4 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-lg shadow-lg shadow-purple-500/30 transition-all hover:scale-105 active:scale-95">Mulai Main</button>
+        </div>
+
+        <div id="screen-play" class="hidden flex-col items-center gap-4 w-full my-auto animate-pop-in">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">MATRIKS POLA GEOMETRIS (2x2):</p>
+
+            <!-- 2x2 Matrix Board -->
+            <div class="grid grid-cols-2 gap-3 p-3 rounded-3xl bg-slate-200/60 dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800 shadow-inner w-56 h-56">
+                <div id="m-0" class="rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl font-black shadow-sm"></div>
+                <div id="m-1" class="rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl font-black shadow-sm"></div>
+                <div id="m-2" class="rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl font-black shadow-sm"></div>
+                <div class="rounded-2xl bg-purple-500/20 border-2 border-purple-500 flex items-center justify-center text-3xl font-black text-purple-500 shadow-sm animate-pulse">?</div>
+            </div>
+
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">PILIH GAMBAR YANG TEPAT:</p>
+
+            <!-- Options -->
+            <div class="grid grid-cols-3 gap-3 w-full max-w-xs">
+                <button onclick="answer(0)" id="opt-0" class="h-16 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-black text-2xl shadow-sm hover:scale-105 active:scale-95 transition-all flex items-center justify-center"></button>
+                <button onclick="answer(1)" id="opt-1" class="h-16 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-black text-2xl shadow-sm hover:scale-105 active:scale-95 transition-all flex items-center justify-center"></button>
+                <button onclick="answer(2)" id="opt-2" class="h-16 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-black text-2xl shadow-sm hover:scale-105 active:scale-95 transition-all flex items-center justify-center"></button>
+            </div>
+        </div>
+
+        <div id="screen-result" class="hidden flex-col items-center gap-6 my-auto animate-pop-in">
+            <div class="text-6xl">📊</div>
+            <div>
+                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-1">Analisis IQ Abstrak Tajam!</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Total Skor Akhir:</p>
+                <p id="final-score" class="text-5xl font-black text-purple-500 mt-2">0</p>
+            </div>
+            <button onclick="startGame()" class="w-full py-4 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black shadow-lg transition-all hover:scale-105">Main Lagi</button>
+        </div>
+
+    </div>
+</main>
+
+<script>
+const SHAPES = ['▲', '■', '●', '★', '◆', '⬟'];
+
+let score = 0;
+let timeLeft = 30;
+let timerInterval;
+let correctOptIndex = 0;
+
+function showScreen(id) {
+    ['screen-start', 'screen-play', 'screen-result'].forEach(s => {
+        const el = document.getElementById(s);
+        if(s === id) { el.classList.remove('hidden'); el.classList.add('flex'); }
+        else { el.classList.add('hidden'); el.classList.remove('flex'); }
+    });
+}
+
+function startGame() {
+    score = 0;
+    timeLeft = 30;
+    document.getElementById('score').innerText = score;
+    document.getElementById('time-left').innerText = timeLeft;
+    showScreen('screen-play');
+    nextQuestion();
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('time-left').innerText = timeLeft;
+        if(timeLeft <= 0) {
+            clearInterval(timerInterval);
+            document.getElementById('final-score').innerText = score;
+            showScreen('screen-result');
+        }
+    }, 1000);
+}
+
+function nextQuestion() {
+    // Pick 2 distinct shapes to build a progression rule (e.g. A B / A ?)
+    const shuffled = [...SHAPES].sort(() => 0.5 - Math.random());
+    const shapeA = shuffled[0];
+    const shapeB = shuffled[1];
+    const shapeWrong = shuffled[2];
+
+    // Pattern Rule: Row 1 is (A, B), Row 2 is (A, ?) -> Correct Answer is B
+    document.getElementById('m-0').innerText = shapeA;
+    document.getElementById('m-1').innerText = shapeB;
+    document.getElementById('m-2').innerText = shapeA;
+
+    correctOptIndex = Math.floor(Math.random() * 3);
+
+    for(let i=0; i<3; i++) {
+        const btn = document.getElementById(`opt-${i}`);
+        if(i === correctOptIndex) {
+            btn.innerText = shapeB;
+        } else if(i === (correctOptIndex + 1) % 3) {
+            btn.innerText = shapeA;
+        } else {
+            btn.innerText = shapeWrong;
+        }
+    }
+}
+
+function answer(idx) {
+    if(idx === correctOptIndex) {
+        score += 10;
+    } else {
+        score = Math.max(0, score - 5);
+    }
+    document.getElementById('score').innerText = score;
+    nextQuestion();
+}
+</script>
+</body>
+</html>

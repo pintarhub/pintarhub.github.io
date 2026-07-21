@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PintarHub - Anagram Rush</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }
+    </script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    :root {
+        --bg-base: #f8fafc;
+        --grad-1: hsla(217,100%,94%,0.5);
+        --grad-2: hsla(280,100%,96%,0.5);
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.8);
+    }
+    .dark {
+        --bg-base: #020617;
+        --grad-1: hsla(217,100%,15%,0.5);
+        --grad-2: hsla(280,100%,15%,0.5);
+        --glass-bg: rgba(15, 23, 42, 0.6);
+        --glass-border: rgba(255, 255, 255, 0.1);
+    }
+    body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: var(--bg-base);
+        background-image: radial-gradient(at 0% 0%, var(--grad-1) 0, transparent 50%), radial-gradient(at 100% 100%, var(--grad-2) 0, transparent 50%); 
+        background-attachment: fixed; 
+    }
+    .glass-panel { background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); }
+    @keyframes popIn { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+    .animate-pop-in { animation: popIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+    ::-webkit-scrollbar { width: 0px; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300">
+
+<header class="sticky top-0 z-40 pt-6 px-4 sm:px-8">
+    <div class="glass-panel rounded-[2rem] px-6 py-4 flex items-center justify-between max-w-7xl mx-auto shadow-sm">
+        <div class="flex items-center gap-3">
+            <a href="/pages/games.html" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300 hover:scale-105 transition-all">←</a>
+            <div>
+                <h1 class="text-xl font-black tracking-tight text-slate-800 dark:text-white">Anagram Rush</h1>
+                <p class="text-xs font-bold text-rose-500">Verbal Fluency Test</p>
+            </div>
+        </div>
+        <button onclick="toggleDarkMode()" class="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-600 dark:text-slate-300">🌙</button>
+    </div>
+</header>
+
+<main class="flex-1 w-full max-w-2xl mx-auto px-4 py-10 flex flex-col items-center justify-center">
+    <div class="glass-panel w-full rounded-[3rem] p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl flex flex-col items-center min-h-[460px] justify-between">
+        
+        <div class="w-full flex justify-between items-center text-sm font-black text-slate-400 border-b border-slate-200/50 dark:border-slate-700/50 pb-4">
+            <span>WAKTU: <span id="time-left" class="text-rose-500">45</span>s</span>
+            <span>KATA: <span id="score" class="text-emerald-500">0</span></span>
+        </div>
+
+        <div id="screen-start" class="flex flex-col items-center gap-6 my-auto animate-pop-in">
+            <div class="w-20 h-20 rounded-3xl bg-rose-500/10 text-rose-500 flex items-center justify-center text-4xl shadow-inner">🔤</div>
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white mb-2">Rangkai Kata Cepat!</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm">Gunakan huruf acak di layar untuk merangkai kata sah bahasa Indonesia sebanyak-banyaknya dalam 45 detik!</p>
+            </div>
+            <button onclick="startGame()" class="px-8 py-4 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-black text-lg shadow-lg shadow-rose-500/30 transition-all hover:scale-105 active:scale-95">Mulai Main</button>
+        </div>
+
+        <div id="screen-play" class="hidden flex-col items-center gap-6 w-full my-auto animate-pop-in">
+            <!-- Scrambled Letters -->
+            <div id="letters-container" class="flex gap-2 sm:gap-3 justify-center my-2">
+            </div>
+
+            <!-- Form Input -->
+            <form onsubmit="submitWord(event)" class="w-full max-w-xs flex flex-col gap-3">
+                <input type="text" id="word-input" autocomplete="off" autofocus uppercase class="w-full text-center text-2xl font-black py-3.5 rounded-2xl bg-white/80 dark:bg-slate-900/80 border-2 border-slate-200 dark:border-slate-700 focus:border-rose-500 outline-none tracking-widest text-slate-800 dark:text-white uppercase font-mono shadow-inner" placeholder="KETIK KATA...">
+                <button type="submit" class="w-full py-3.5 rounded-2xl bg-rose-500 text-white font-black shadow-md hover:scale-[1.02] active:scale-95 transition-all">Kirim (Enter)</button>
+            </form>
+
+            <p id="msg-feedback" class="text-xs font-bold h-4 text-slate-400"></p>
+        </div>
+
+        <div id="screen-result" class="hidden flex-col items-center gap-6 my-auto animate-pop-in">
+            <div class="text-6xl">📚</div>
+            <div>
+                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-1">Kemampuan Verbal Hebat!</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Total Kata Ditemukan:</p>
+                <p id="final-score" class="text-5xl font-black text-rose-500 mt-2">0</p>
+            </div>
+            <button onclick="startGame()" class="w-full py-4 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-black shadow-lg transition-all hover:scale-105">Main Lagi</button>
+        </div>
+
+    </div>
+</main>
+
+<script>
+// Pool kata-kata dasar bahasa Indonesia
+const WORD_POOL = ["PASAR", "PADAM", "MAKAN", "MINUM", "LARI", "SURAT", "RUMAH", "KASUR", "PINTAR", "BAGUS", "TAMAN", "CINTA"];
+
+let score = 0;
+let timeLeft = 45;
+let timerInterval;
+let currentLetters = [];
+let foundWords = new Set();
+
+function showScreen(id) {
+    ['screen-start', 'screen-play', 'screen-result'].forEach(s => {
+        const el = document.getElementById(s);
+        if(s === id) { el.classList.remove('hidden'); el.classList.add('flex'); }
+        else { el.classList.add('hidden'); el.classList.remove('flex'); }
+    });
+}
+
+function startGame() {
+    score = 0;
+    timeLeft = 45;
+    foundWords.clear();
+    document.getElementById('score').innerText = score;
+    document.getElementById('time-left').innerText = timeLeft;
+    showScreen('screen-play');
+    nextRound();
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('time-left').innerText = timeLeft;
+        if(timeLeft <= 0) {
+            clearInterval(timerInterval);
+            document.getElementById('final-score').innerText = score;
+            showScreen('screen-result');
+        }
+    }, 1000);
+}
+
+function nextRound() {
+    const randomTarget = WORD_POOL[Math.floor(Math.random() * WORD_POOL.length)];
+    // Acak huruf
+    currentLetters = randomTarget.split('').sort(() => 0.5 - Math.random());
+
+    const container = document.getElementById('letters-container');
+    container.innerHTML = '';
+    currentLetters.forEach(char => {
+        const box = document.createElement('div');
+        box.className = "w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 border-2 border-rose-400 flex items-center justify-center text-xl font-black text-slate-800 dark:text-white shadow-sm";
+        box.innerText = char;
+        container.appendChild(box);
+    });
+
+    document.getElementById('word-input').value = '';
+    document.getElementById('word-input').focus();
+}
+
+function submitWord(e) {
+    e.preventDefault();
+    const input = document.getElementById('word-input').value.trim().toUpperCase();
+    const feedback = document.getElementById('msg-feedback');
+
+    if(!input) return;
+
+    if(foundWords.has(input)) {
+        feedback.innerText = "Kata sudah pernah ditebak!";
+        feedback.className = "text-xs font-bold h-4 text-amber-500";
+        return;
+    }
+
+    // Cek apakah huruf input sesuai dengan currentLetters
+    let tempLetters = [...currentLetters];
+    let isValid = true;
+    for(let char of input) {
+        let idx = tempLetters.indexOf(char);
+        if(idx !== -1) {
+            tempLetters.splice(idx, 1);
+        } else {
+            isValid = false;
+            break;
+        }
+    }
+
+    if(isValid && input.length >= 3) {
+        foundWords.add(input);
+        score++;
+        document.getElementById('score').innerText = score;
+        feedback.innerText = "Benar! (+1 Kata)";
+        feedback.className = "text-xs font-bold h-4 text-emerald-500";
+        nextRound();
+    } else {
+        feedback.innerText = "Huruf tidak cocok!";
+        feedback.className = "text-xs font-bold h-4 text-rose-500";
+    }
+}
+</script>
+</body>
+</html>

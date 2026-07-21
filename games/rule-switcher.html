@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PintarHub - Rule Switcher</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }
+    </script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    :root {
+        --bg-base: #f8fafc;
+        --grad-1: hsla(217,100%,94%,0.5);
+        --grad-2: hsla(280,100%,96%,0.5);
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.8);
+    }
+    .dark {
+        --bg-base: #020617;
+        --grad-1: hsla(217,100%,15%,0.5);
+        --grad-2: hsla(280,100%,15%,0.5);
+        --glass-bg: rgba(15, 23, 42, 0.6);
+        --glass-border: rgba(255, 255, 255, 0.1);
+    }
+    body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: var(--bg-base);
+        background-image: radial-gradient(at 0% 0%, var(--grad-1) 0, transparent 50%), radial-gradient(at 100% 100%, var(--grad-2) 0, transparent 50%); 
+        background-attachment: fixed; 
+    }
+    .glass-panel { background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); }
+    @keyframes popIn { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+    .animate-pop-in { animation: popIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+    ::-webkit-scrollbar { width: 0px; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300">
+
+<header class="sticky top-0 z-40 pt-6 px-4 sm:px-8">
+    <div class="glass-panel rounded-[2rem] px-6 py-4 flex items-center justify-between max-w-7xl mx-auto shadow-sm">
+        <div class="flex items-center gap-3">
+            <a href="/pages/games.html" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300 hover:scale-105 transition-all">←</a>
+            <div>
+                <h1 class="text-xl font-black tracking-tight text-slate-800 dark:text-white">Rule Switcher</h1>
+                <p class="text-xs font-bold text-purple-500">Cognitive Flexibility Test</p>
+            </div>
+        </div>
+        <button onclick="toggleDarkMode()" class="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-600 dark:text-slate-300">🌙</button>
+    </div>
+</header>
+
+<main class="flex-1 w-full max-w-2xl mx-auto px-4 py-10 flex flex-col items-center justify-center">
+    <div class="glass-panel w-full rounded-[3rem] p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl flex flex-col items-center min-h-[460px] justify-between">
+        
+        <div class="w-full flex justify-between items-center text-sm font-black text-slate-400 border-b border-slate-200/50 dark:border-slate-700/50 pb-4">
+            <span>WAKTU: <span id="time-left" class="text-purple-500">30</span>s</span>
+            <span>SKOR: <span id="score" class="text-emerald-500">0</span></span>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="screen-start" class="flex flex-col items-center gap-6 my-auto animate-pop-in">
+            <div class="w-20 h-20 rounded-3xl bg-purple-500/10 text-purple-500 flex items-center justify-center text-4xl shadow-inner">🔄</div>
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white mb-2">Pindah Aturan Cepat!</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm">Aturan permainan bakal berubah tiba-tiba! Perhatikan indikator aturan di layar apakah kamu harus mencocokkan **WARNA** atau **BENTUK**.</p>
+            </div>
+            <button onclick="startGame()" class="px-8 py-4 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-lg shadow-lg shadow-purple-500/30 transition-all hover:scale-105 active:scale-95">Mulai Main</button>
+        </div>
+
+        <!-- Gameplay Screen -->
+        <div id="screen-play" class="hidden flex-col items-center gap-6 w-full my-auto animate-pop-in">
+            <!-- Indikator Aturan -->
+            <div id="rule-badge" class="px-6 py-2 rounded-full bg-purple-600 text-white font-black text-xs uppercase tracking-widest animate-pulse">
+                ATURAN: COCOKKAN WARNA!
+            </div>
+
+            <!-- Objek Target (Atas) -->
+            <div id="target-card" class="w-28 h-28 rounded-3xl border-4 border-slate-200 dark:border-slate-700 flex items-center justify-center text-5xl shadow-inner transition-all">
+                🟩
+            </div>
+
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Pilih objek yang cocok:</p>
+
+            <!-- 2 Pilihan (Bawah) -->
+            <div class="grid grid-cols-2 gap-4 w-full max-w-xs">
+                <button id="btn-option-0" onclick="chooseOption(0)" class="h-24 rounded-3xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-4xl shadow-sm hover:scale-105 transition-all active:scale-95">
+                    🟥
+                </button>
+                <button id="btn-option-1" onclick="chooseOption(1)" class="h-24 rounded-3xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-4xl shadow-sm hover:scale-105 transition-all active:scale-95">
+                    🟦
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="screen-result" class="hidden flex-col items-center gap-6 my-auto animate-pop-in">
+            <div class="text-6xl">🧠</div>
+            <div>
+                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-1">Adaptasi Fleksibel!</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Total Skor Akhir:</p>
+                <p id="final-score" class="text-5xl font-black text-purple-500 mt-2">0</p>
+            </div>
+            <button onclick="startGame()" class="w-full py-4 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black shadow-lg transition-all hover:scale-105">Main Lagi</button>
+        </div>
+
+    </div>
+</main>
+
+<script>
+// Objek dengan atribut warna & bentuk
+const ITEMS = [
+    { name: 'Kotak Hijau', color: 'green', shape: 'square', icon: '🟩' },
+    { name: 'Lingkaran Hijau', color: 'green', shape: 'circle', icon: '🟢' },
+    { name: 'Kotak Merah', color: 'red', shape: 'square', icon: '🟥' },
+    { name: 'Lingkaran Merah', color: 'red', shape: 'circle', icon: '🔴' }
+];
+
+let score = 0;
+let timeLeft = 30;
+let timerInterval;
+let currentRule = 'color'; // 'color' atau 'shape'
+let currentTarget = null;
+let currentOptions = [];
+
+function showScreen(id) {
+    ['screen-start', 'screen-play', 'screen-result'].forEach(s => {
+        const el = document.getElementById(s);
+        if(s === id) { el.classList.remove('hidden'); el.classList.add('flex'); }
+        else { el.classList.add('hidden'); el.classList.remove('flex'); }
+    });
+}
+
+function startGame() {
+    score = 0;
+    timeLeft = 30;
+    document.getElementById('score').innerText = score;
+    document.getElementById('time-left').innerText = timeLeft;
+    showScreen('screen-play');
+    
+    nextRound();
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('time-left').innerText = timeLeft;
+        if(timeLeft <= 0) {
+            clearInterval(timerInterval);
+            document.getElementById('final-score').innerText = score;
+            showScreen('screen-result');
+        }
+    }, 1000);
+}
+
+function nextRound() {
+    // Acak aturan secara dinamis (50% Warna, 50% Bentuk)
+    currentRule = Math.random() > 0.5 ? 'color' : 'shape';
+    const badge = document.getElementById('rule-badge');
+    badge.innerText = currentRule === 'color' ? 'ATURAN: COCOKKAN WARNA!' : 'ATURAN: COCOKKAN BENTUK!';
+
+    // Pick target acak
+    currentTarget = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+    document.getElementById('target-card').innerText = currentTarget.icon;
+
+    // Tentukan jawaban benar & salah
+    let correctOption = ITEMS.find(item => {
+        if(item === currentTarget) return false;
+        return currentRule === 'color' ? item.color === currentTarget.color : item.shape === currentTarget.shape;
+    });
+
+    let wrongOption = ITEMS.find(item => {
+        return item.color !== currentTarget.color && item.shape !== currentTarget.shape;
+    });
+
+    // Acak posisi tombol (kiri/kanan)
+    currentOptions = Math.random() > 0.5 ? [correctOption, wrongOption] : [wrongOption, correctOption];
+
+    document.getElementById('btn-option-0').innerText = currentOptions[0].icon;
+    document.getElementById('btn-option-1').innerText = currentOptions[1].icon;
+}
+
+function chooseOption(index) {
+    const selected = currentOptions[index];
+    const isCorrect = (currentRule === 'color') 
+        ? selected.color === currentTarget.color 
+        : selected.shape === currentTarget.shape;
+
+    if(isCorrect) {
+        score += 10;
+    } else {
+        score = Math.max(0, score - 5);
+    }
+
+    document.getElementById('score').innerText = score;
+    nextRound();
+}
+</script>
+</body>
+</html>
